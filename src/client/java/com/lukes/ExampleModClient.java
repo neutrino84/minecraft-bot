@@ -1,4 +1,4 @@
-package com.example;
+package com.lukes;
 
 import net.fabricmc.api.ClientModInitializer;
 
