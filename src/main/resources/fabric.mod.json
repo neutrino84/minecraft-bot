@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "mbot",
+	"version": "${version}",
+	"name": "MBot",
+	"description": "Minecraft helper and defence automated companion",
+	"authors": [
+		"Luke Dyla"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": ""
+	},
+	"license": "MIT",
+	"icon": "assets/mbot/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.lukes.MBot"
+		],
+		"client": [
+			"com.lukes.ExampleModClient"
+		]
+	},
+	"mixins": [
+		"mbot.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.5",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}
