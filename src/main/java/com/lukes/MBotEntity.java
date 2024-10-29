@@ -62,6 +62,21 @@ public class MBotEntity extends PathAwareEntity {
     }
 
     @Override
+    protected void initDataTracker() {
+        super.initDataTracker();
+    }
+
+    @Override
+    public boolean canBeLeashedBy(PlayerEntity player) {
+        return false;
+    }
+
+    @Override
+    public boolean isFireImmune() {
+        return false;
+    }
+
+    @Override
     public boolean isCustomNameVisible() {
         return true;
     }
