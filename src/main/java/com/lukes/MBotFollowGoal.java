@@ -18,7 +18,7 @@ public class MBotFollowGoal extends Goal {
         this.mbot = mbot;
         this.speed = speed;
         this.navigation = mbot.getNavigation();
-        this.stopDistance = 2.0F;
+        this.stopDistance = 5.0F;
         this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
     }
 

@@ -34,5 +34,8 @@
 		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*"
+	},
+	"files": {
+		"config/fabric/log4j2.xml": "config/fabric/log4j2.xml"
 	}
 }

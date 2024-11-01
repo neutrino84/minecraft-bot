@@ -1,5 +1,7 @@
 package com.lukes;
 
+import com.lukes.networking.BotSyncPacket;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -8,11 +10,12 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRe
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.player.PlayerEntity;
+// import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 
@@ -23,18 +26,19 @@ public class MBot implements ModInitializer {
 	public static final String MOD_ID = "mbot";
 
 	public static final EntityType<MBotEntity> HELPER_BOT = Registry.register(
-        Registries.ENTITY_TYPE,
-        new Identifier(MOD_ID, "helper_bot"),
-        FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, MBotEntity::new)
-            .dimensions(EntityDimensions.fixed(0.6F, 1.8F))
-            .trackRangeBlocks(32)
-            .build()
-    );
+		Registries.ENTITY_TYPE,
+		new Identifier(MOD_ID, "helper_bot"),
+		FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, MBotEntity::new)
+			.dimensions(EntityDimensions.fixed(0.6F, 1.8F))
+			.trackRangeBlocks(32)
+			.trackedUpdateRate(2)
+			.build()
+	);
 
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Logger LOGGER = LoggerFactory.getLogger("mbot");
 
 	@Override
 	@SuppressWarnings("unused")
@@ -55,7 +59,7 @@ public class MBot implements ModInitializer {
 			dispatcher.register(CommandManager.literal("spawnbot")
 				.executes(context -> {
 					try {
-						PlayerEntity player = context.getSource().getPlayer();
+                        ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 						LOGGER.info("Attempting to spawn bot for player: " + player.getName().getString());
 						
 						if (player != null) {
@@ -64,10 +68,15 @@ public class MBot implements ModInitializer {
 							
 							if (bot != null) {
 								bot.setPos(player.getX(), player.getY(), player.getZ());
+								bot.setOwner(player);
 								bot.setTargetPlayer(player);
 								bot.setCustomName(Text.literal("Helper Bot"));
 								boolean spawnSuccess = player.getWorld().spawnEntity(bot);
 								LOGGER.info("Bot spawn result: " + spawnSuccess);
+                            
+								// Send sync packet to client
+								BotSyncPacket.sendToClient(player);
+
 								context.getSource().sendMessage(Text.literal("Helper Bot spawned and following you!"));
 							} else {
 								LOGGER.error("Failed to create bot entity");
